@@ -1,20 +1,4 @@
-import React, {useEffect, useState} from 'react';
-
-export function useAlertManager() {
-    const [alerts, setAlerts] = useState([]);
-
-    const addAlert = (message, type = 'info', duration = 5000) => {
-        const id = generateUUID();
-        const createTime = new Date().getTime();
-        setAlerts((prevState) => [...prevState, {id, createTime, message, type, duration}]);
-    };
-
-    const removeAlert = (id) => {
-        setAlerts((prevState) => prevState.filter(alert => alert.id !== id));
-    };
-    return {alerts, addAlert, removeAlert}
-}
-
+import React, {useEffect} from 'react';
 export const AlertManager = ({alerts = [], addAlert, removeAlert}) => {
     return (
         alerts.length === 0 ? <></> :
@@ -27,14 +11,13 @@ export const AlertManager = ({alerts = [], addAlert, removeAlert}) => {
                             message={alert.message}
                             type={alert.type}
                             duration={alert.duration}
-                            onClose={() => removeAlert(alert.id)}
+                            onClose={() => removeAlert({id: alert.id})}
                         />
                     ))}
                 </div>
             </div>
     );
 };
-
 const Alert = ({createTime = new Date().getTime(), message, type, onClose, duration = 0}) => {
     useEffect(() => {
         if (duration > 0) {
@@ -59,11 +42,3 @@ const Alert = ({createTime = new Date().getTime(), message, type, onClose, durat
         </div>
     );
 };
-
-function generateUUID() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        const r = Math.random() * 16 | 0;
-        const v = c === 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-}
